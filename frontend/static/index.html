@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PuckGM • Professional Fantasy Hockey Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+<style>
+  :root {
+    /* Modern NHL Dark Slate & Electric Cyan Palette */
+    --bg-body: #090d16;
+    --bg-sidebar: #060911;
+    --bg-surface: #0f172a;
+    --bg-surface-elevated: #1e293b;
+    --bg-surface-subtle: #162032;
+    
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --border-medium: rgba(255, 255, 255, 0.12);
+    --border-accent: rgba(56, 189, 248, 0.35);
+
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+
+    --accent: #0284c7;
+    --accent-glow: #38bdf8;
+    --accent-hover: #0369a1;
+    --accent-gradient: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+    --card-gradient: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%);
+
+    --success: #10b981;
+    --success-bg: rgba(16, 185, 129, 0.12);
+    --danger: #f43f5e;
+    --danger-bg: rgba(244, 63, 94, 0.12);
+    --warning: #f59e0b;
+    --warning-bg: rgba(245, 158, 11, 0.12);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    font-family:'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background:var(--bg-body);
+    color:var(--text-primary);
+    display:flex;
+    height:100vh;
+    overflow:hidden;
+    letter-spacing:-0.01em;
+  }
+
+  /* Custom Scrollbars */
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:rgba(255, 255, 255, 0.15); border-radius:3px; }
+  ::-webkit-scrollbar-thumb:hover { background:rgba(255, 255, 255, 0.25); }
+
+  /* Left Navigation Sidebar */
+  .app-sidebar {
+    width:255px;
+    background:var(--bg-sidebar);
+    display:flex;
+    flex-direction:column;
+    flex-shrink:0;
+    border-right:1px solid var(--border-subtle);
+  }
+
+  .brand-header {
+    padding:1.3rem 1.4rem;
+    font-size:1.1rem;
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    gap:0.7rem;
+    border-bottom:1px solid var(--border-subtle);
+    background:linear-gradient(180deg, rgba(15, 23, 42, 0.6) 0%, transparent 100%);
+  }
+  .brand-badge {
+    background:rgba(56, 189, 248, 0.15);
+    color:var(--accent-glow);
+    font-size:0.65rem;
+    padding:2px 8px;
+    border-radius:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    border:1px solid rgba(56, 189, 248, 0.3);
+    letter-spacing:0.04em;
+  }
+
+  /* Team Crest Widget */
+  .team-crest-box {
+    padding:1rem 1.3rem;
+    border-bottom:1px solid var(--border-subtle);
+    display:flex;
+    align-items:center;
+    gap:0.8rem;
+    background:rgba(15, 23, 42, 0.4);
+  }
+  .team-crest-img {
+    width:42px;
+    height:42px;
+    border-radius:10px;
+    object-fit:cover;
+    border:1px solid var(--border-accent);
+    background:#0f172a;
+    box-shadow:0 0 12px rgba(56, 189, 248, 0.2);
+    cursor:pointer;
+    transition:transform 0.2s ease;
+  }
+  .team-crest-img:hover { transform:scale(1.05); }
+  .team-name { font-size:0.88rem; font-weight:700; color:#fff; }
+  .team-sub { font-size:0.72rem; color:var(--text-secondary); margin-top:1px; }
+  .crest-edit-btn {
+    font-size:0.7rem;
+    color:var(--accent-glow);
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0;
+    margin-top:3px;
+    display:inline-block;
+    font-weight:600;
+  }
+  .crest-edit-btn:hover { text-decoration:underline; }
+
+  /* Navigation Menu */
+  .nav-menu { flex:1; padding:1rem 0; display:flex; flex-direction:column; gap:0.25rem; overflow-y:auto; }
+  .nav-item {
+    padding:0.7rem 1.4rem;
+    color:var(--text-secondary);
+    font-size:0.88rem;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:0.75rem;
+    cursor:pointer;
+    transition:all 0.18s ease;
+    border-left:3px solid transparent;
+    user-select:none;
+  }
+  .nav-item:hover { color:#fff; background:rgba(255, 255, 255, 0.03); }
+  .nav-item.active {
+    color:#fff;
+    background:linear-gradient(90deg, rgba(2, 132, 199, 0.2) 0%, transparent 100%);
+    border-left-color:var(--accent-glow);
+  }
+  .nav-item .count-pill {
+    margin-left:auto;
+    background:rgba(255, 255, 255, 0.08);
+    color:var(--text-secondary);
+    font-size:0.7rem;
+    font-family:'JetBrains Mono', monospace;
+    padding:1px 7px;
+    border-radius:8px;
+  }
+  .nav-item.active .count-pill {
+    background:rgba(56, 189, 248, 0.2);
+    color:var(--accent-glow);
+  }
+
+  .sidebar-footer {
+    padding:1rem 1.3rem;
+    border-top:1px solid var(--border-subtle);
+    font-size:0.74rem;
+    color:var(--text-muted);
+    display:flex;
+    flex-direction:column;
+    gap:0.35rem;
+    background:rgba(15, 23, 42, 0.3);
+  }
+  .league-info { font-weight:600; color:var(--text-secondary); display:flex; align-items:center; gap:0.4rem; }
+
+  /* Main Workspace Wrapper */
+  .workspace-wrapper { flex:1; display:flex; height:100vh; overflow:hidden; position:relative; }
+  .workspace { flex:1; display:flex; flex-direction:column; height:100vh; overflow:hidden; background:var(--bg-body); }
+
+  /* Top Bar */
+  .top-bar {
+    height:64px;
+    background:var(--bg-sidebar);
+    border-bottom:1px solid var(--border-subtle);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 1.8rem;
+    flex-shrink:0;
+  }
+  .top-title {
+    font-size:1.15rem;
+    font-weight:700;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    gap:0.6rem;
+  }
+  .top-actions { display:flex; align-items:center; gap:0.6rem; }
+  .top-btn {
+    padding:0.45rem 0.95rem;
+    border-radius:8px;
+    border:1px solid var(--border-medium);
+    background:var(--bg-surface);
+    color:var(--text-secondary);
+    font-size:0.82rem;
+    font-weight:600;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:0.4rem;
+    transition:all 0.18s ease;
+  }
+  .top-btn:hover { background:var(--bg-surface-elevated); color:#fff; border-color:rgba(255, 255, 255, 0.2); }
+  .top-btn.primary {
+    background:var(--accent-gradient);
+    border:none;
+    color:#fff;
+    box-shadow:0 0 15px rgba(2, 132, 199, 0.35);
+  }
+  .top-btn.primary:hover {
+    box-shadow:0 0 20px rgba(56, 189, 248, 0.5);
+    transform:translateY(-1px);
+  }
+
+  /* Filter & Search Toolbar */
+  .filter-bar {
+    background:rgba(15, 23, 42, 0.5);
+    padding:0.75rem 1.8rem;
+    border-bottom:1px solid var(--border-subtle);
+    display:flex;
+    align-items:center;
+    gap:0.9rem;
+    flex-wrap:wrap;
+    backdrop-filter:blur(8px);
+  }
+  .search-input {
+    padding:0.45rem 0.9rem;
+    border:1px solid var(--border-medium);
+    border-radius:8px;
+    font-size:0.84rem;
+    width:240px;
+    outline:none;
+    background:var(--bg-sidebar);
+    color:#fff;
+    transition:border-color 0.2s;
+  }
+  .search-input:focus { border-color:var(--accent-glow); box-shadow:0 0 10px rgba(56, 189, 248, 0.2); }
+  
+  .pill-group { display:flex; gap:0.35rem; }
+  .filter-pill {
+    padding:0.35rem 0.85rem;
+    border-radius:7px;
+    border:1px solid var(--border-medium);
+    background:var(--bg-surface);
+    color:var(--text-secondary);
+    font-size:0.78rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:all 0.15s ease;
+  }
+  .filter-pill:hover { color:#fff; border-color:rgba(255, 255, 255, 0.25); }
+  .filter-pill.active {
+    background:rgba(56, 189, 248, 0.18);
+    color:var(--accent-glow);
+    border-color:var(--accent-glow);
+  }
+  .sort-select {
+    padding:0.4rem 0.8rem;
+    border-radius:8px;
+    border:1px solid var(--border-medium);
+    font-size:0.82rem;
+    color:var(--text-secondary);
+    background:var(--bg-surface);
+    outline:none;
+    margin-left:auto;
+  }
+
+  /* View Panels */
+  .view-panel { flex:1; display:none; overflow-y:auto; padding:1.6rem 1.8rem; }
+  .view-panel.active { display:block; }
+
+  /* KPI Summary Cards */
+  .stats-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:1.1rem; margin-bottom:1.5rem; }
+  .summary-card {
+    background:var(--card-gradient);
+    border:1px solid var(--border-subtle);
+    border-radius:14px;
+    padding:1.1rem 1.4rem;
+    box-shadow:0 4px 20px rgba(0, 0, 0, 0.35);
+    position:relative;
+    overflow:hidden;
+  }
+  .summary-card::before {
+    content:'';
+    position:absolute;
+    top:0; left:0; width:100%; height:2px;
+    background:var(--accent-gradient);
+    opacity:0.6;
+  }
+  .summary-card .label { font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.3rem; }
+  .summary-card .value { font-size:1.75rem; font-weight:800; color:#fff; font-family:'JetBrains Mono', monospace; }
+  .summary-card .subtext { font-size:0.75rem; color:var(--text-secondary); margin-top:0.25rem; }
+
+  /* Schedule Optimizer Banner */
+  .schedule-banner {
+    background:var(--card-gradient);
+    border:1px solid var(--border-subtle);
+    border-radius:14px;
+    padding:1.1rem 1.4rem;
+    margin-bottom:1.5rem;
+    box-shadow:0 4px 20px rgba(0, 0, 0, 0.25);
+  }
+  .sched-title { font-size:0.9rem; font-weight:700; color:#fff; margin-bottom:0.8rem; display:flex; justify-content:space-between; align-items:center; }
+  .sched-days { display:grid; grid-template-columns:repeat(7, 1fr); gap:0.6rem; text-align:center; }
+  .sched-day {
+    padding:0.6rem 0.4rem;
+    border-radius:10px;
+    background:rgba(15, 23, 42, 0.6);
+    border:1px solid var(--border-subtle);
+    transition:transform 0.15s ease;
+  }
+  .sched-day:hover { transform:translateY(-2px); border-color:var(--border-medium); }
+  .sched-day.off-night {
+    border-color:rgba(56, 189, 248, 0.4);
+    background:rgba(2, 132, 199, 0.1);
+  }
+  .sched-day .day-name { font-size:0.7rem; font-weight:700; color:var(--text-muted); }
+  .sched-day .game-count { font-size:1.1rem; font-weight:800; color:#fff; font-family:'JetBrains Mono', monospace; margin:2px 0; }
+  .sched-day .badge-tag { font-size:0.62rem; color:var(--accent-glow); font-weight:700; text-transform:uppercase; }
+
+  /* Player Grid & Professional Player Cards */
+  .player-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(295px, 1fr)); gap:1.2rem; }
+  .player-card {
+    background:var(--card-gradient);
+    border:1px solid var(--border-subtle);
+    border-radius:14px;
+    padding:1.2rem;
+    box-shadow:0 4px 16px rgba(0, 0, 0, 0.3);
+    display:flex;
+    flex-direction:column;
+    gap:0.85rem;
+    transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position:relative;
+  }
+  .player-card:hover {
+    transform:translateY(-3px);
+    border-color:rgba(56, 189, 248, 0.4);
+    box-shadow:0 8px 25px rgba(2, 132, 199, 0.18);
+  }
+  .player-top { display:flex; gap:0.9rem; align-items:center; }
+  .player-mug {
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    object-fit:cover;
+    background:#0f172a;
+    border:2px solid var(--border-medium);
+    cursor:zoom-in;
+    flex-shrink:0;
+    transition:border-color 0.2s;
+  }
+  .player-mug:hover { border-color:var(--accent-glow); }
+  .player-meta { flex:1; min-width:0; }
+  .player-name { font-size:1.05rem; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .player-team-pos { font-size:0.8rem; color:var(--text-secondary); font-weight:500; margin-top:2px; }
+  
+  .status-badge {
+    font-size:0.68rem;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:6px;
+    text-transform:uppercase;
+    display:inline-block;
+    margin-top:0.35rem;
+    letter-spacing:0.03em;
+  }
+  .status-roster { background:rgba(2, 132, 199, 0.2); color:var(--accent-glow); border:1px solid rgba(56, 189, 248, 0.3); }
+  .status-waiver { background:var(--warning-bg); color:var(--warning); border:1px solid rgba(245, 158, 11, 0.3); }
+  .status-watchlist { background:rgba(168, 85, 247, 0.2); color:#c084fc; border:1px solid rgba(168, 85, 247, 0.3); }
+
+  /* Momentum Form Bar */
+  .form-strip {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:rgba(15, 23, 42, 0.7);
+    border:1px solid var(--border-subtle);
+    border-radius:8px;
+    padding:0.4rem 0.7rem;
+    font-size:0.75rem;
+  }
+  .form-strip .form-title { font-weight:600; color:var(--text-muted); }
+  .form-strip .form-badge { font-weight:700; padding:2px 7px; border-radius:5px; font-size:0.7rem; }
+  .form-badge.hot { background:var(--danger-bg); color:var(--danger); border:1px solid rgba(244, 63, 94, 0.3); }
+  .form-badge.steady { background:rgba(56, 189, 248, 0.15); color:var(--accent-glow); border:1px solid rgba(56, 189, 248, 0.25); }
+
+  /* Player Stats Row */
+  .player-stats-bar {
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    background:rgba(15, 23, 42, 0.6);
+    padding:0.6rem 0.4rem;
+    border-radius:10px;
+    text-align:center;
+    border:1px solid var(--border-subtle);
+  }
+  .stat-block .s-label { font-size:0.65rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em; }
+  .stat-block .s-val { font-size:0.96rem; font-weight:800; color:#fff; font-family:'JetBrains Mono', monospace; margin-top:1px; }
+
+  .player-notes {
+    font-size:0.8rem;
+    color:var(--text-secondary);
+    line-height:1.4;
+    background:rgba(15, 23, 42, 0.4);
+    padding:0.5rem 0.75rem;
+    border-radius:8px;
+    border-left:3px solid var(--accent-glow);
+  }
+
+  .player-actions { display:flex; gap:0.45rem; margin-top:auto; padding-top:0.3rem; }
+  .p-btn {
+    flex:1;
+    padding:0.48rem;
+    border-radius:7px;
+    font-size:0.78rem;
+    font-weight:600;
+    cursor:pointer;
+    text-align:center;
+    border:1px solid var(--border-medium);
+    background:var(--bg-surface);
+    color:var(--text-secondary);
+    transition:all 0.15s ease;
+  }
+  .p-btn:hover { background:var(--bg-surface-elevated); color:#fff; border-color:rgba(255, 255, 255, 0.25); }
+  .p-btn.action-ask {
+    background:rgba(2, 132, 199, 0.15);
+    color:var(--accent-glow);
+    border-color:rgba(56, 189, 248, 0.3);
+  }
+  .p-btn.action-ask:hover { background:rgba(2, 132, 199, 0.3); color:#fff; }
+
+  /* Matchup Scoreboard View */
+  .matchup-container {
+    background:var(--card-gradient);
+    border:1px solid var(--border-subtle);
+    border-radius:16px;
+    padding:1.6rem;
+    box-shadow:0 6px 25px rgba(0, 0, 0, 0.35);
+  }
+  .matchup-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid var(--border-subtle);
+    padding-bottom:1.2rem;
+    margin-bottom:1.2rem;
+  }
+  .matchup-team { display:flex; align-items:center; gap:0.9rem; }
+  .matchup-score { font-size:2.4rem; font-weight:900; color:#fff; font-family:'JetBrains Mono', monospace; }
+  
+  .category-table { width:100%; border-collapse:collapse; margin-top:0.6rem; }
+  .category-table th, .category-table td {
+    padding:0.75rem 1rem;
+    text-align:center;
+    font-size:0.88rem;
+    border-bottom:1px solid var(--border-subtle);
+  }
+  .category-table th { font-size:0.72rem; text-transform:uppercase; color:var(--text-muted); background:rgba(15, 23, 42, 0.6); letter-spacing:0.04em; }
+  .cat-winning { font-weight:800; color:var(--success); background:var(--success-bg); font-family:'JetBrains Mono', monospace; }
+  .cat-losing { color:var(--text-muted); font-family:'JetBrains Mono', monospace; }
+
+  /* Trade Center Layout */
+  .trade-layout { display:grid; grid-template-columns:1fr 1fr; gap:1.4rem; margin-bottom:1.4rem; }
+  .trade-box {
+    background:var(--card-gradient);
+    border:1px solid var(--border-subtle);
+    border-radius:14px;
+    padding:1.3rem;
+  }
+  .trade-box h3 { font-size:0.95rem; font-weight:700; color:#fff; margin-bottom:0.9rem; display:flex; align-items:center; justify-content:space-between; }
+  .trade-select {
+    width:100%;
+    padding:0.7rem;
+    border:1px solid var(--border-medium);
+    border-radius:8px;
+    font-size:0.88rem;
+    margin-bottom:0.8rem;
+    outline:none;
+    background:var(--bg-surface);
+    color:#fff;
+  }
+
+  /* Slide-Out AI Copilot Drawer (Split Screen) */
+  .copilot-drawer {
+    width:400px;
+    background:var(--bg-sidebar);
+    border-left:1px solid var(--border-subtle);
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+    flex-shrink:0;
+    box-shadow:-6px 0 30px rgba(0, 0, 0, 0.4);
+    transition:transform 0.25s ease;
+  }
+  .copilot-drawer.closed { display:none; }
+  .copilot-header {
+    padding:1rem 1.4rem;
+    background:var(--bg-surface);
+    border-bottom:1px solid var(--border-subtle);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .copilot-title { font-size:0.95rem; font-weight:700; color:#fff; display:flex; align-items:center; gap:0.5rem; }
+  .close-copilot { background:none; border:none; color:var(--text-secondary); cursor:pointer; font-size:1.3rem; }
+  .close-copilot:hover { color:#fff; }
+
+  /* Chat Stream & Bubbles */
+  #assistant-panel { height:100%; display:flex; flex-direction:column; overflow:hidden; padding:0; }
+  .chat-stream { flex:1; overflow-y:auto; padding:1.4rem; display:flex; flex-direction:column; gap:1.1rem; }
+  .msg-row { display:flex; gap:0.75rem; align-items:flex-start; max-width:88%; }
+  .msg-row.user { align-self:flex-end; flex-direction:row-reverse; }
+  .msg-row.agent { align-self:flex-start; }
+  .avatar {
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.05rem;
+    flex-shrink:0;
+    box-shadow:0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  .msg-row.agent .avatar { background:var(--accent-gradient); color:#fff; border:1px solid var(--border-accent); }
+  .msg-row.user .avatar { background:rgba(56, 189, 248, 0.2); color:var(--accent-glow); border:1px solid rgba(56, 189, 248, 0.3); }
+
+  .msg-content { display:flex; flex-direction:column; gap:0.25rem; max-width:100%; }
+  .msg-row.user .msg-content { align-items:flex-end; }
+  .sender-header { display:flex; align-items:center; gap:0.4rem; margin:0 0.3rem; }
+  .sender-name { font-size:0.75rem; font-weight:600; color:var(--text-secondary); }
+  .msg-time { font-size:0.7rem; color:var(--text-muted); font-family:'JetBrains Mono', monospace; }
+
+  .bubble {
+    display:inline-block;
+    padding:0.85rem 1.15rem;
+    border-radius:14px;
+    background:var(--bg-surface-elevated);
+    border:1px solid var(--border-subtle);
+    color:var(--text-primary);
+    text-align:left;
+    white-space:pre-wrap;
+    box-shadow:0 2px 10px rgba(0, 0, 0, 0.2);
+    line-height:1.5;
+    font-size:0.92rem;
+  }
+  .msg-row.user .bubble {
+    background:var(--accent-gradient);
+    color:#fff;
+    border:none;
+    box-shadow:0 4px 15px rgba(2, 132, 199, 0.3);
+    border-top-right-radius:2px;
+  }
+  .msg-row.agent .bubble { border-top-left-radius:2px; }
+  .bubble.rich { background:transparent; border:none; padding:0; max-width:100%; white-space:normal; box-shadow:none; }
+
+  /* Animated Typing Indicator */
+  .typing-indicator { display:flex; align-items:center; gap:5px; padding:0.2rem 0.3rem; }
+  .typing-indicator span {
+    width:7px; height:7px;
+    background:var(--accent-glow);
+    border-radius:50%;
+    display:inline-block;
+    animation:bounce 1.4s infinite ease-in-out both;
+  }
+  .typing-indicator span:nth-child(1) { animation-delay:-0.32s; }
+  .typing-indicator span:nth-child(2) { animation-delay:-0.16s; }
+  @keyframes bounce {
+    0%, 80%, 100% { transform:scale(0); opacity:0.3; }
+    40% { transform:scale(1); opacity:1; }
+  }
+
+  /* Quick Prompts Bar */
+  .quick-prompts { display:flex; gap:0.45rem; padding:0.6rem 1.2rem; background:transparent; overflow-x:auto; }
+  .prompt-btn {
+    background:var(--bg-surface);
+    border:1px solid var(--border-medium);
+    color:var(--accent-glow);
+    border-radius:20px;
+    padding:0.4rem 0.9rem;
+    font-size:0.8rem;
+    font-weight:600;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:all 0.18s ease;
+  }
+  .prompt-btn:hover {
+    background:rgba(56, 189, 248, 0.15);
+    border-color:var(--accent-glow);
+    color:#fff;
+    transform:translateY(-1px);
+  }
+
+  /* Chat Form Box */
+  .chat-form-box { background:var(--bg-sidebar); border-top:1px solid var(--border-subtle); padding:0.9rem 1.2rem; }
+  form.chat-form { display:flex; gap:0.6rem; width:100%; }
+  form.chat-form input {
+    flex:1;
+    padding:0.75rem 1rem;
+    border:1px solid var(--border-medium);
+    border-radius:10px;
+    font-size:0.92rem;
+    outline:none;
+    background:var(--bg-surface);
+    color:#fff;
+    transition:border-color 0.2s;
+  }
+  form.chat-form input:focus { border-color:var(--accent-glow); box-shadow:0 0 10px rgba(56, 189, 248, 0.2); }
+  form.chat-form button.send-btn {
+    padding:0.75rem 1.3rem;
+    border:none;
+    border-radius:10px;
+    background:var(--accent-gradient);
+    color:#fff;
+    font-weight:700;
+    font-size:0.9rem;
+    cursor:pointer;
+    transition:all 0.2s ease;
+  }
+  form.chat-form button.send-btn:hover { box-shadow:0 0 15px rgba(56, 189, 248, 0.4); }
+
+  /* A2UI Component Styles (Dark Glass) */
+  .a2card {
+    border:1px solid var(--border-subtle);
+    border-radius:14px;
+    padding:1.2rem;
+    background:var(--card-gradient);
+    box-shadow:0 4px 20px rgba(0, 0, 0, 0.35);
+    max-width:100%;
+  }
+  .a2card + .a2card, .a2col > .a2card { margin-top:0.6rem; }
+  .a2col { display:flex; flex-direction:column; gap:0.4rem; }
+  .a2row { display:flex; flex-direction:row; gap:0.6rem; align-items:center; flex-wrap:wrap; }
+  .a2row.between { justify-content:space-between; }
+  .a2text { margin:0; line-height:1.45; }
+  .a2text.a2-h1 { font-size:1.45rem; font-weight:800; color:#fff; }
+  .a2text.a2-h2 { font-size:1.25rem; font-weight:700; color:#fff; }
+  .a2text.a2-h3 { font-size:1.05rem; font-weight:700; color:var(--accent-glow); }
+  .a2text.a2-h4 { font-size:0.95rem; font-weight:600; color:#fff; }
+  .a2text.a2-caption { font-size:0.82rem; color:var(--text-secondary); }
+  .a2divider { border:none; border-top:1px solid var(--border-subtle); margin:0.5rem 0; width:100%; }
+  .a2img { max-width:100%; border-radius:10px; display:block; cursor:zoom-in; border:1px solid var(--border-subtle); transition:transform 0.2s ease; }
+  .a2img:hover { transform:scale(1.02); border-color:var(--accent-glow); }
+  .material-symbols-outlined { font-family:'Material Symbols Outlined'; font-size:1.25rem; line-height:1; vertical-align:middle; color:var(--accent-glow); }
+
+  /* Logo Generator Modal */
+  .custom-modal {
+    display:none;
+    position:fixed;
+    z-index:9998;
+    top:0; left:0; width:100%; height:100%;
+    background:rgba(6, 9, 17, 0.85);
+    backdrop-filter:blur(6px);
+    align-items:center;
+    justify-content:center;
+  }
+  .custom-modal.active { display:flex; }
+  .modal-card {
+    background:var(--bg-surface);
+    border:1px solid var(--border-medium);
+    border-radius:16px;
+    padding:1.6rem;
+    width:460px;
+    max-width:90%;
+    box-shadow:0 12px 40px rgba(0, 0, 0, 0.6);
+  }
+  .modal-title { font-size:1.2rem; font-weight:800; color:#fff; margin-bottom:0.5rem; }
+  .modal-input {
+    width:100%;
+    padding:0.8rem;
+    border:1px solid var(--border-medium);
+    border-radius:10px;
+    margin:1rem 0;
+    font-size:0.9rem;
+    outline:none;
+    background:var(--bg-sidebar);
+    color:#fff;
+  }
+  .modal-input:focus { border-color:var(--accent-glow); }
+
+  /* Lightbox Modal */
+  .lightbox-modal {
+    display:none;
+    position:fixed;
+    z-index:9999;
+    top:0; left:0; width:100%; height:100%;
+    background:rgba(6, 9, 17, 0.92);
+    backdrop-filter:blur(8px);
+    align-items:center;
+    justify-content:center;
+  }
+  .lightbox-modal.active { display:flex; }
+  .lightbox-modal img { max-width:85%; max-height:85%; border-radius:14px; box-shadow:0 8px 35px rgba(0, 0, 0, 0.7); border:1px solid var(--border-accent); }
+  .lightbox-close { position:absolute; top:20px; right:30px; color:#fff; font-size:2.2rem; cursor:pointer; font-weight:700; }
+</style>
+</head>
+<body>
+
+<!-- Left Navigation Sidebar -->
+<aside class="app-sidebar">
+  <div class="brand-header">
+    🏒 PuckGM <span class="brand-badge">PRO</span>
+  </div>
+
+  <!-- Team Crest Studio Widget -->
+  <div class="team-crest-box">
+    <img src="https://storage.googleapis.com/puck-gm-media-ab64a7/puckgm_crest_logo.png" onerror="this.src='https://assets.nhle.com/mugs/nhl/default-player.png'" class="team-crest-img" id="sidebarTeamCrest" onclick="openLogoStudio()">
+    <div class="team-crest-info">
+      <div class="team-name">PuckGM Frostbite</div>
+      <div class="team-sub">1st in Division (7-2-0)</div>
+      <button class="crest-edit-btn" onclick="openLogoStudio()">🎨 AI Crest Studio</button>
+    </div>
+  </div>
+
+  <nav class="nav-menu">
+    <a class="nav-item active" onclick="switchTab('roster', this)">
+      <span class="material-symbols-outlined">shield_person</span> My Roster
+      <span class="count-pill" id="rosterCount">0</span>
+    </a>
+    <a class="nav-item" onclick="switchTab('matchup', this)">
+      <span class="material-symbols-outlined">sports_hockey</span> Weekly Matchup
+    </a>
+    <a class="nav-item" onclick="switchTab('watchlist', this)">
+      <span class="material-symbols-outlined">visibility</span> Watched Players
+      <span class="count-pill" id="watchCount">0</span>
+    </a>
+    <a class="nav-item" onclick="switchTab('waivers', this)">
+      <span class="material-symbols-outlined">person_search</span> Waiver Wire
+      <span class="count-pill" id="waiverCount">0</span>
+    </a>
+    <a class="nav-item" onclick="switchTab('trade', this)">
+      <span class="material-symbols-outlined">swap_horiz</span> Trade Center
+    </a>
+    <a class="nav-item" onclick="switchTab('assistant', this)">
+      <span class="material-symbols-outlined">forum</span> War Room AI
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="league-info">🏆 League: 12-Team H2H Banger</div>
+    <div>Scoring: G (3), A (2), PPP (1), Hit (0.5), Blk (0.5)</div>
+    <div style="margin-top:0.3rem;"><button style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:0.75rem; text-decoration:underline;" onclick="resetChat()">Reset AI Session</button></div>
+  </div>
+</aside>
+
+<!-- Main Workspace Wrapper -->
+<div class="workspace-wrapper">
+  <main class="workspace">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="top-title" id="tabHeading">
+        <span class="material-symbols-outlined">shield_person</span> Active Fantasy Roster
+      </div>
+      <div class="top-actions">
+        <button class="top-btn" onclick="askAssistantPrompt('Run a comprehensive injury check across my active roster and recommend replacements')">
+          <span class="material-symbols-outlined">medical_services</span> Injury Report
+        </button>
+        <button class="top-btn" onclick="askAssistantPrompt('Which players on my roster or watchlist have blazing hot 5-game momentum?')">
+          <span class="material-symbols-outlined">local_fire_department</span> Hot Streaks
+        </button>
+        <button class="top-btn primary" onclick="toggleCopilot()">
+          <span class="material-symbols-outlined" style="color:#fff;">splitscreen</span> AI Copilot
+        </button>
+      </div>
+    </header>
+
+    <!-- Filter & Search Toolbar -->
+    <div class="filter-bar" id="filterBar">
+      <input type="text" class="search-input" id="playerSearch" placeholder="🔍 Search player by name..." oninput="filterPlayers()">
+      <div class="pill-group">
+        <button class="filter-pill active" onclick="setPosFilter('ALL', this)">All</button>
+        <button class="filter-pill" onclick="setPosFilter('C', this)">Centers</button>
+        <button class="filter-pill" onclick="setPosFilter('W', this)">Wingers</button>
+        <button class="filter-pill" onclick="setPosFilter('D', this)">Defense</button>
+        <button class="filter-pill" onclick="setPosFilter('G', this)">Goalies</button>
+      </div>
+      <select class="sort-select" id="playerSort" onchange="filterPlayers()">
+        <option value="points">Sort by: Total Points</option>
+        <option value="goals">Sort by: Goals</option>
+        <option value="peripherals">Sort by: Hits &amp; Blocks</option>
+        <option value="name">Sort by: Name (A-Z)</option>
+      </select>
+    </div>
+
+    <!-- TAB 1: Roster Panel -->
+    <section class="view-panel active" id="roster-panel">
+      <!-- 7-Day Schedule Optimizer -->
+      <div class="schedule-banner">
+        <div class="sched-title">
+          <span>📅 Week 4 NHL Schedule &amp; Streaming Grid</span>
+          <span style="font-size:0.75rem; color:var(--accent-glow); font-weight:600;">3 Off-Night Games Highlighted (Optimal Streaming)</span>
+        </div>
+        <div class="sched-days">
+          <div class="sched-day off-night"><div class="day-name">MON</div><div class="game-count">3</div><div class="badge-tag">Stream ★</div></div>
+          <div class="sched-day"><div class="day-name">TUE</div><div class="game-count">5</div></div>
+          <div class="sched-day off-night"><div class="day-name">WED</div><div class="game-count">2</div><div class="badge-tag">Stream ★</div></div>
+          <div class="sched-day"><div class="day-name">THU</div><div class="game-count">5</div></div>
+          <div class="sched-day off-night"><div class="day-name">FRI</div><div class="game-count">4</div><div class="badge-tag">Stream ★</div></div>
+          <div class="sched-day"><div class="day-name">SAT</div><div class="game-count">5</div></div>
+          <div class="sched-day off-night"><div class="day-name">SUN</div><div class="game-count">3</div><div class="badge-tag">Stream ★</div></div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="summary-card">
+          <div class="label">Roster Size</div>
+          <div class="value" id="rosterStatCount">0</div>
+          <div class="subtext">Active NHL Fantasy Assets</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Total Fantasy Points</div>
+          <div class="value" id="rosterTotalPts">0</div>
+          <div class="subtext">Season Points Accumulated</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Total Hits &amp; Blocks</div>
+          <div class="value" id="rosterPeripherals">0</div>
+          <div class="subtext">Banger Category Production</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Team Health</div>
+          <div class="value" style="color:var(--success);">100%</div>
+          <div class="subtext">0 Players on Injured Reserve</div>
+        </div>
+      </div>
+      <div class="player-grid" id="rosterGrid"></div>
+    </section>
+
+    <!-- TAB 2: Matchup Panel -->
+    <section class="view-panel" id="matchup-panel">
+      <div class="matchup-container">
+        <div class="matchup-header">
+          <div class="matchup-team">
+            <img src="https://storage.googleapis.com/puck-gm-media-ab64a7/puckgm_crest_logo.png" onerror="this.src='https://assets.nhle.com/mugs/nhl/default-player.png'" style="width:52px; height:52px; border-radius:10px; border:1px solid var(--border-accent);">
+            <div>
+              <div style="font-size:1.2rem; font-weight:800; color:#fff;">PuckGM Frostbite (You)</div>
+              <div style="font-size:0.8rem; color:var(--text-secondary);">Manager: General Manager</div>
+            </div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700; letter-spacing:0.04em;">H2H Category Matchup</div>
+            <div class="matchup-score">6 — 4</div>
+            <div style="font-size:0.78rem; color:var(--success); font-weight:700;">Winning 6 Categories</div>
+          </div>
+          <div class="matchup-team" style="flex-direction:row-reverse; text-align:right;">
+            <div style="width:52px; height:52px; border-radius:10px; background:var(--bg-surface); display:flex; align-items:center; justify-content:center; font-size:1.8rem; border:1px solid var(--border-subtle);">🐺</div>
+            <div>
+              <div style="font-size:1.2rem; font-weight:800; color:#fff;">Alberta Ice Dogs</div>
+              <div style="font-size:0.8rem; color:var(--text-secondary);">Rival Manager: Dave S.</div>
+            </div>
+          </div>
+        </div>
+
+        <table class="category-table">
+          <thead>
+            <tr>
+              <th>Frostbite (You)</th>
+              <th>Category</th>
+              <th>Ice Dogs (Rival)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="cat-winning">18</td><td><strong>Goals (G)</strong></td><td class="cat-losing">14</td><td><span style="color:var(--success); font-weight:700;">+4 W</span></td></tr>
+            <tr><td class="cat-winning">32</td><td><strong>Assists (A)</strong></td><td class="cat-losing">26</td><td><span style="color:var(--success); font-weight:700;">+6 W</span></td></tr>
+            <tr><td class="cat-winning">50</td><td><strong>Points (PTS)</strong></td><td class="cat-losing">40</td><td><span style="color:var(--success); font-weight:700;">+10 W</span></td></tr>
+            <tr><td class="cat-losing">+2</td><td><strong>Plus / Minus (+/-)</strong></td><td class="cat-winning">+5</td><td><span style="color:var(--danger); font-weight:700;">-3 L</span></td></tr>
+            <tr><td class="cat-winning">14</td><td><strong>Power Play Points (PPP)</strong></td><td class="cat-losing">9</td><td><span style="color:var(--success); font-weight:700;">+5 W</span></td></tr>
+            <tr><td class="cat-winning">68</td><td><strong>Hits (HIT)</strong></td><td class="cat-losing">52</td><td><span style="color:var(--success); font-weight:700;">+16 W</span></td></tr>
+            <tr><td class="cat-losing">24</td><td><strong>Blocks (BLK)</strong></td><td class="cat-winning">29</td><td><span style="color:var(--danger); font-weight:700;">-5 L</span></td></tr>
+            <tr><td class="cat-winning">2</td><td><strong>Goalie Wins (W)</strong></td><td class="cat-losing">1</td><td><span style="color:var(--success); font-weight:700;">+1 W</span></td></tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top:1.4rem; text-align:center;">
+          <button class="top-btn primary" style="margin:0 auto; padding:0.65rem 1.6rem;" onclick="askAssistantPrompt('Run a Monte Carlo simulation of my current matchup against Alberta Ice Dogs and project my final win probability.')">
+            🎲 Run Matchup Simulation (Monte Carlo Sandbox)
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: Watchlist Panel -->
+    <section class="view-panel" id="watchlist-panel">
+      <div style="margin-bottom:1.2rem;">
+        <h2 style="font-size:1.15rem; font-weight:700; color:#fff;">Scouting Watchlist</h2>
+        <p style="font-size:0.85rem; color:var(--text-secondary);">High-upside targets tracked for trades and upcoming waiver claims.</p>
+      </div>
+      <div class="player-grid" id="watchlistGrid"></div>
+    </section>
+
+    <!-- TAB 4: Waiver Wire Panel -->
+    <section class="view-panel" id="waivers-panel">
+      <div style="margin-bottom:1.2rem;">
+        <h2 style="font-size:1.15rem; font-weight:700; color:#fff;">Available Free Agents &amp; Waivers</h2>
+        <p style="font-size:0.85rem; color:var(--text-secondary);">Available players ready to add to your roster or place on your watchlist.</p>
+      </div>
+      <div class="player-grid" id="waiverGrid"></div>
+    </section>
+
+    <!-- TAB 5: Trade Center Panel -->
+    <section class="view-panel" id="trade-panel">
+      <div style="margin-bottom:1.2rem;">
+        <h2 style="font-size:1.15rem; font-weight:700; color:#fff;">Fantasy Trade Machine &amp; Analyzer</h2>
+        <p style="font-size:0.85rem; color:var(--text-secondary);">Test trade proposals with official NHL stats and let the AI GM evaluate value &amp; momentum.</p>
+      </div>
+      <div class="trade-layout">
+        <div class="trade-box">
+          <h3><span>📤 Players You Give Away</span> <span class="badge" style="color:var(--accent-glow);">Your Roster</span></h3>
+          <select class="trade-select" id="tradeGiveSelect"></select>
+          <div id="givePreview" style="font-size:0.85rem; color:var(--text-muted);">Select a player to review stats...</div>
+        </div>
+        <div class="trade-box">
+          <h3><span>📥 Players You Receive</span> <span class="badge" style="color:var(--success);">Target Asset</span></h3>
+          <select class="trade-select" id="tradeReceiveSelect"></select>
+          <div id="receivePreview" style="font-size:0.85rem; color:var(--text-muted);">Select target player to analyze...</div>
+        </div>
+      </div>
+      <div class="trade-cta">
+        <button class="top-btn primary" style="padding:0.75rem 2.2rem; font-size:0.95rem; margin:0 auto;" onclick="runTradeAnalysis()">
+          ⚖️ Evaluate Trade with PuckGM AI
+        </button>
+      </div>
+    </section>
+
+    <!-- TAB 6: Full Screen AI War Room Assistant Panel -->
+    <section class="view-panel" id="assistant-panel">
+      <div class="chat-stream" id="logFull"></div>
+      <div class="quick-prompts">
+        <button type="button" class="prompt-btn" onclick="sendPrompt('Show my active fantasy roster and top waiver targets')">📋 Roster &amp; Waivers</button>
+        <button type="button" class="prompt-btn" onclick="sendPrompt('Analyze trade: I give Nathan MacKinnon for Brady Tkachuk and Wyatt Johnston in banger points mode')">⚖️ Trade Nathan MacKinnon</button>
+        <button type="button" class="prompt-btn" onclick="sendPrompt('Check Edmonton Oilers upcoming schedule and Western conference standings')">📅 Schedule &amp; Standings</button>
+        <button type="button" class="prompt-btn" onclick="sendPrompt('Who should I drop to add Wyatt Johnston?')">🤔 Add/Drop Dilemma</button>
+      </div>
+      <div class="chat-form-box">
+        <form class="chat-form" onsubmit="handleFormSubmit(event, 'full')">
+          <input id="inputFull" placeholder="Ask your AI Assistant GM anything about your team, matchups, or trades…" autocomplete="off">
+          <button class="send-btn">Send</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Slide-Out Copilot Drawer (Split Screen) -->
+  <aside class="copilot-drawer closed" id="copilotDrawer">
+    <div class="copilot-header">
+      <div class="copilot-title">
+        <span class="material-symbols-outlined">smart_toy</span> PuckGM AI Copilot
+      </div>
+      <button class="close-copilot" onclick="toggleCopilot()">&times;</button>
+    </div>
+    <div class="chat-stream" id="logDrawer"></div>
+    <div class="quick-prompts">
+      <button type="button" class="prompt-btn" onclick="sendPrompt('Recommend 1 high-upside streamer for Friday')">⚡ Best Streamer</button>
+      <button type="button" class="prompt-btn" onclick="sendPrompt('Compare Connor McDavid vs Nathan MacKinnon rest of season')">⚔️ McDavid vs MacKinnon</button>
+    </div>
+    <div class="chat-form-box">
+      <form class="chat-form" onsubmit="handleFormSubmit(event, 'drawer')">
+        <input id="inputDrawer" placeholder="Ask Copilot…" autocomplete="off">
+        <button class="send-btn">Send</button>
+      </form>
+    </div>
+  </aside>
+</div>
+
+<!-- AI Team Crest Studio Modal -->
+<div class="custom-modal" id="crestModal">
+  <div class="modal-card">
+    <div class="modal-title">🎨 AI Team Crest Studio</div>
+    <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.4;">Generate a custom fantasy franchise logo or hype poster using Google Imagen 3 and save it directly to your Cloud Storage bucket.</p>
+    <input type="text" class="modal-input" id="crestPromptInput" value="Fierce cybernetic yeti hockey player wearing ice blue jersey and skates, dynamic vector sports logo style">
+    <div style="display:flex; justify-content:flex-end; gap:0.6rem; margin-top:0.6rem;">
+      <button class="top-btn" onclick="closeLogoStudio()">Cancel</button>
+      <button class="top-btn primary" onclick="generateTeamLogo()">✨ Generate with PuckGM</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox Modal -->
+<div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox()">
+  <span class="lightbox-close">&times;</span>
+  <img id="lightboxImg" src="" alt="Enlarged media">
+</div>
+
+<script>
+let allPlayers = [];
+let currentPosFilter = 'ALL';
+let isCopilotOpen = false;
+
+const lightboxModal = document.getElementById("lightboxModal");
+const lightboxImg = document.getElementById("lightboxImg");
+const crestModal = document.getElementById("crestModal");
+
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+function getTimeStr() {
+  const d = new Date();
+  return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+}
+
+// Navigation Tabs
+function switchTab(tabName, navElement) {
+  document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  
+  const panel = document.getElementById(tabName + "-panel");
+  if (panel) panel.classList.add("active");
+
+  if (navElement) {
+    navElement.classList.add("active");
+  } else {
+    const matchedNav = Array.from(document.querySelectorAll(".nav-item")).find(n => n.getAttribute("onclick") && n.getAttribute("onclick").includes(tabName));
+    if (matchedNav) matchedNav.classList.add("active");
+  }
+
+  // Filter bar visibility
+  const filterBar = document.getElementById("filterBar");
+  if (["roster", "watchlist", "waivers"].includes(tabName)) {
+    filterBar.style.display = "flex";
+  } else {
+    filterBar.style.display = "none";
+  }
+
+  const headings = {
+    "roster": "🛡️ Active Fantasy Roster",
+    "matchup": "⚔️ Week 4 Head-to-Head Matchup",
+    "watchlist": "👁️ Watched Players & Targets",
+    "waivers": "🔍 Available Waiver Wire Assets",
+    "trade": "⚖️ Fantasy Trade Machine",
+    "assistant": "🏒 PuckGM War Room AI"
+  };
+  document.getElementById("tabHeading").innerHTML = headings[tabName] || "PuckGM Platform";
+}
+
+// Copilot Drawer Toggle
+function toggleCopilot() {
+  const drawer = document.getElementById("copilotDrawer");
+  isCopilotOpen = !isCopilotOpen;
+  if (isCopilotOpen) {
+    drawer.classList.remove("closed");
+  } else {
+    drawer.classList.add("closed");
+  }
+}
+
+// Filter and Sort system
+function setPosFilter(pos, btn) {
+  document.querySelectorAll(".filter-pill").forEach(p => p.classList.remove("active"));
+  btn.classList.add("active");
+  currentPosFilter = pos;
+  filterPlayers();
+}
+
+function filterPlayers() {
+  const query = (document.getElementById("playerSearch").value || "").toLowerCase().trim();
+  const sortMode = document.getElementById("playerSort").value;
+
+  let filtered = allPlayers.filter(p => {
+    const matchesName = (p.name || "").toLowerCase().includes(query);
+    if (!matchesName) return false;
+
+    if (currentPosFilter === 'ALL') return true;
+    const pos = (p.position || "").toUpperCase();
+    if (currentPosFilter === 'C') return pos.includes('C');
+    if (currentPosFilter === 'W') return pos.includes('LW') || pos.includes('RW') || pos.includes('W');
+    if (currentPosFilter === 'D') return pos.includes('D');
+    if (currentPosFilter === 'G') return pos.includes('G');
+    return true;
+  });
+
+  // Sort
+  filtered.sort((a, b) => {
+    if (sortMode === "points") return (b.points || 0) - (a.points || 0);
+    if (sortMode === "goals") return (b.goals || 0) - (a.goals || 0);
+    if (sortMode === "peripherals") return ((b.hits || 0) + (b.blocks || 0)) - ((a.hits || 0) + (a.blocks || 0));
+    if (sortMode === "name") return (a.name || "").localeCompare(b.name || "");
+    return 0;
+  });
+
+  renderFilteredViews(filtered);
+}
+
+// Fetch players from platform API
+async function loadPlatformData() {
+  try {
+    const res = await fetch("/api/players");
+    const data = await res.json();
+    allPlayers = data.players || [];
+    filterPlayers();
+  } catch (err) {
+    console.error("Failed to load players:", err);
+  }
+}
+
+function renderFilteredViews(playersList) {
+  const roster = playersList.filter(p => p.status === "Roster");
+  const watchlist = playersList.filter(p => p.status === "Watchlist");
+  const waivers = playersList.filter(p => p.status === "Waiver");
+
+  // Counters
+  document.getElementById("rosterCount").textContent = allPlayers.filter(p => p.status === "Roster").length;
+  document.getElementById("watchCount").textContent = allPlayers.filter(p => p.status === "Watchlist").length;
+  document.getElementById("waiverCount").textContent = allPlayers.filter(p => p.status === "Waiver").length;
+  document.getElementById("rosterStatCount").textContent = allPlayers.filter(p => p.status === "Roster").length;
+
+  let totalPts = 0;
+  let totalPeripherals = 0;
+  allPlayers.filter(p => p.status === "Roster").forEach(p => {
+    totalPts += (p.points || 0);
+    totalPeripherals += (p.hits || 0) + (p.blocks || 0);
+  });
+  document.getElementById("rosterTotalPts").textContent = totalPts;
+  document.getElementById("rosterPeripherals").textContent = totalPeripherals;
+
+  // Render Grids
+  renderPlayerGrid("rosterGrid", roster, "roster");
+  renderPlayerGrid("watchlistGrid", watchlist, "watchlist");
+  renderPlayerGrid("waiverGrid", waivers, "waiver");
+
+  // Populate Trade Dropdowns
+  populateTradeDropdowns(allPlayers.filter(p => p.status === "Roster"), allPlayers.filter(p => p.status !== "Roster"));
+}
+
+function getHeadshotUrl(p) {
+  return p.profile_picture || p.image_url || p.nhl_headshot_url || "https://assets.nhle.com/mugs/nhl/default-player.png";
+}
+
+function renderPlayerGrid(containerId, players, type) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+  if (!players.length) {
+    container.innerHTML = '<div style="color:var(--text-muted); font-size:0.9rem; padding:1.5rem;">No players found matching current filters.</div>';
+    return;
+  }
+
+  players.forEach(p => {
+    const card = el("div", "player-card");
+    const top = el("div", "player-top");
+    
+    const img = el("img", "player-mug");
+    img.src = getHeadshotUrl(p);
+    img.alt = p.name;
+    img.onclick = () => openLightbox(img.src);
+    top.appendChild(img);
+
+    const meta = el("div", "player-meta");
+    const name = el("div", "player-name", p.name);
+    const teamPos = el("div", "player-team-pos", `${p.position || "F"} • ${p.team || "NHL"} | ${p.injury_status || "Healthy"}`);
+    
+    const badgeCls = p.status === "Roster" ? "status-roster" : (p.status === "Watchlist" ? "status-watchlist" : "status-waiver");
+    const statusBadge = el("span", `status-badge ${badgeCls}`, p.status);
+    
+    meta.appendChild(name);
+    meta.appendChild(teamPos);
+    meta.appendChild(statusBadge);
+    top.appendChild(meta);
+    card.appendChild(top);
+
+    // Live Momentum Form Strip
+    const formStrip = el("div", "form-strip");
+    const isHot = (p.points || 0) > 40 || (p.hits || 0) > 100;
+    formStrip.innerHTML = `
+      <span class="form-title">5-Game Form</span>
+      <span class="form-badge ${isHot ? 'hot' : 'steady'}">${isHot ? '🔥 Blazing Hot' : '⚡ Steady Surge'}</span>
+    `;
+    card.appendChild(formStrip);
+
+    // Stats bar
+    const statsBar = el("div", "player-stats-bar");
+    statsBar.innerHTML = `
+      <div class="stat-block"><div class="s-label">Goals</div><div class="s-val">${p.goals ?? 0}</div></div>
+      <div class="stat-block"><div class="s-label">Assists</div><div class="s-val">${p.assists ?? 0}</div></div>
+      <div class="stat-block"><div class="s-label">Points</div><div class="s-val">${p.points ?? 0}</div></div>
+      <div class="stat-block"><div class="s-label">Hits/Blk</div><div class="s-val">${(p.hits || 0) + (p.blocks || 0)}</div></div>
+    `;
+    card.appendChild(statsBar);
+
+    if (p.notes) {
+      const notes = el("div", "player-notes", p.notes);
+      card.appendChild(notes);
+    }
+
+    // Action buttons
+    const actions = el("div", "player-actions");
+    if (type === "waiver") {
+      const addWatch = el("button", "p-btn", "⭐ Watch");
+      addWatch.onclick = () => updatePlayerStatus(p.name, "Watchlist");
+      const addRoster = el("button", "p-btn", "➕ Add");
+      addRoster.onclick = () => updatePlayerStatus(p.name, "Roster");
+      actions.appendChild(addWatch);
+      actions.appendChild(addRoster);
+    } else if (type === "watchlist") {
+      const addRoster = el("button", "p-btn", "➕ Add");
+      addRoster.onclick = () => updatePlayerStatus(p.name, "Roster");
+      const dropWaiver = el("button", "p-btn", "Remove");
+      dropWaiver.onclick = () => updatePlayerStatus(p.name, "Waiver");
+      actions.appendChild(addRoster);
+      actions.appendChild(dropWaiver);
+    } else {
+      const moveWatch = el("button", "p-btn", "Move to Watchlist");
+      moveWatch.onclick = () => updatePlayerStatus(p.name, "Watchlist");
+      actions.appendChild(moveWatch);
+    }
+
+    const askBtn = el("button", "p-btn action-ask", "💬 Ask AI");
+    askBtn.onclick = () => askAssistantPrompt(`Give me an in-depth fantasy analysis and upcoming outlook for ${p.name}`);
+    actions.appendChild(askBtn);
+
+    card.appendChild(actions);
+    container.appendChild(card);
+  });
+}
+
+async function updatePlayerStatus(name, newStatus) {
+  try {
+    const res = await fetch("/api/players/status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: name, status: newStatus })
+    });
+    if (res.ok) {
+      await loadPlatformData();
+    }
+  } catch (e) {
+    console.error("Status update error", e);
+  }
+}
+
+function populateTradeDropdowns(roster, targets) {
+  const giveSelect = document.getElementById("tradeGiveSelect");
+  const receiveSelect = document.getElementById("tradeReceiveSelect");
+  if (!giveSelect || !receiveSelect) return;
+  giveSelect.innerHTML = '<option value="">-- Choose player from your roster --</option>';
+  receiveSelect.innerHTML = '<option value="">-- Choose player to acquire --</option>';
+
+  roster.forEach(p => {
+    giveSelect.innerHTML += `<option value="${p.name}">${p.name} (${p.position} - ${p.team}) [${p.points} PTS]</option>`;
+  });
+  targets.forEach(p => {
+    receiveSelect.innerHTML += `<option value="${p.name}">${p.name} (${p.position} - ${p.team}) [${p.points} PTS]</option>`;
+  });
+}
+
+function runTradeAnalysis() {
+  const give = document.getElementById("tradeGiveSelect").value;
+  const receive = document.getElementById("tradeReceiveSelect").value;
+  if (!give || !receive) {
+    alert("Please select both a player to give and a player to receive.");
+    return;
+  }
+  askAssistantPrompt(`Evaluate trade proposal: I give ${give} in exchange for ${receive}. Analyze who wins the trade based on scoring, momentum, and banger peripherals.`);
+}
+
+function askAssistantPrompt(promptText) {
+  if (!isCopilotOpen) toggleCopilot();
+  sendPrompt(promptText);
+}
+
+// Logo Studio Modal
+function openLogoStudio() {
+  crestModal.classList.add("active");
+}
+
+function closeLogoStudio() {
+  crestModal.classList.remove("active");
+}
+
+function generateTeamLogo() {
+  const prompt = document.getElementById("crestPromptInput").value;
+  closeLogoStudio();
+  askAssistantPrompt(`Generate a custom fantasy team logo for PuckGM: ${prompt}`);
+}
+
+// Dialogue & Message System
+function bubble(who) {
+  const targetContainers = [document.getElementById("logFull"), document.getElementById("logDrawer")];
+  const returnBubbles = [];
+
+  targetContainers.forEach(container => {
+    if (!container) return;
+    const row = el("div", "msg-row " + who);
+    const avatar = el("div", "avatar", who === "agent" ? "🏒" : "👤");
+    const content = el("div", "msg-content");
+    
+    const senderHeader = el("div", "sender-header");
+    const nameLabel = el("div", "sender-name", who === "agent" ? "PuckGM Assistant" : "You (General Manager)");
+    const timeLabel = el("div", "msg-time", getTimeStr());
+    senderHeader.appendChild(nameLabel);
+    senderHeader.appendChild(timeLabel);
+
+    const b = el("div", "bubble");
+
+    content.appendChild(senderHeader);
+    content.appendChild(b);
+    row.appendChild(avatar);
+    row.appendChild(content);
+
+    container.appendChild(row);
+    container.scrollTop = container.scrollHeight;
+    returnBubbles.push(b);
+  });
+
+  return returnBubbles;
+}
+
+function openLightbox(url) {
+  lightboxImg.src = url;
+  lightboxModal.classList.add("active");
+}
+
+function closeLightbox() {
+  lightboxModal.classList.remove("active");
+  lightboxImg.src = "";
+}
+
+// A2UI Parser
+function boundStr(v) {
+  if (v == null) return "";
+  if (typeof v === "string") return v;
+  if (typeof v.literalString === "string") return v.literalString;
+  return "";
+}
+
+function childIds(props) {
+  const ids = [];
+  if (props && typeof props.child === "string") ids.push(props.child);
+  const ch = props && props.children;
+  if (ch && Array.isArray(ch.explicitList)) for (const c of ch.explicitList) if (typeof c === "string") ids.push(c);
+  return ids;
+}
+
+function iconName(n) { return String(n || "").replace(/([a-z0-9])([A-Z])/g, "$1_$2").replace(/\s+/g, "_").toLowerCase(); }
+
+function buildNode(id, comps, seen) {
+  if (!id || seen.has(id)) return null;
+  seen.add(id);
+  const spec = comps[id];
+  if (!spec || typeof spec !== "object") return null;
+  const type = Object.keys(spec)[0];
+  const props = spec[type] || {};
+
+  const kids = () => childIds(props).map(cid => buildNode(cid, comps, seen)).filter(Boolean);
+
+  switch (type) {
+    case "Card": {
+      const d = el("div", "a2card"); kids().forEach(n => d.appendChild(n)); return d;
+    }
+    case "Column":
+    case "List": {
+      const horizontal = type === "List" && props.direction === "horizontal";
+      const d = el("div", horizontal ? "a2row" : "a2col"); kids().forEach(n => d.appendChild(n)); return d;
+    }
+    case "Row": {
+      const d = el("div", "a2row" + (props.distribution === "spaceBetween" ? " between" : ""));
+      kids().forEach(n => d.appendChild(n)); return d;
+    }
+    case "Text": {
+      const t = el("div", "a2text");
+      const hint = String(props.usageHint || "body").toLowerCase();
+      if (["h1", "h2", "h3", "h4", "h5", "h6"].includes(hint)) t.classList.add("a2-" + hint);
+      else if (hint === "caption") t.classList.add("a2-caption");
+      t.textContent = boundStr(props.text);
+      return t;
+    }
+    case "Divider":
+      return el("hr", "a2divider");
+    case "Image": {
+      const src = boundStr(props.url || props.src);
+      if (!/^https?:\/\//i.test(src)) return null;
+      const img = el("img", "a2img");
+      img.src = src;
+      img.alt = boundStr(props.alt) || "Player or graphic";
+      img.onclick = () => openLightbox(src);
+      return img;
+    }
+    case "Icon": {
+      const s = el("span", "material-symbols-outlined"); s.textContent = iconName(boundStr(props.name) || props.name); return s;
+    }
+    default:
+      return null;
+  }
+}
+
+function renderSurface(messages, container) {
+  const comps = {};
+  const roots = [];
+  for (const m of messages) {
+    if (m.beginRendering && typeof m.beginRendering.root === "string") roots.push(m.beginRendering.root);
+    const su = m.surfaceUpdate;
+    if (su && Array.isArray(su.components)) for (const c of su.components) if (c && c.id && c.component) comps[c.id] = c.component;
+  }
+  let rootIds = roots.filter(r => comps[r]);
+  if (rootIds.length === 0) {
+    const referenced = new Set();
+    for (const id in comps) { const spec = comps[id]; childIds(spec[Object.keys(spec)[0]] || {}).forEach(c => referenced.add(c)); }
+    rootIds = Object.keys(comps).filter(id => !referenced.has(id));
+  }
+  let drew = false;
+  for (const rid of rootIds) { const node = buildNode(rid, comps, new Set()); if (node) { container.appendChild(node); drew = true; } }
+  return drew;
+}
+
+function flattenText(messages) {
+  const out = [];
+  for (const m of messages) {
+    const su = m.surfaceUpdate;
+    if (su && Array.isArray(su.components)) for (const c of su.components) if (c && c.component && c.component.Text) out.push(boundStr(c.component.Text.text));
+  }
+  return out.join("\n").trim();
+}
+
+function renderReply(bubbles, parts) {
+  bubbles.forEach(b => {
+    b.innerHTML = "";
+    const texts = parts.filter(p => p && (p.kind === "text" || (!p.kind && p.text))).map(p => p.text || "");
+    const a2ui = parts.filter(p => p && p.kind === "a2ui" && p.data).map(p => p.data);
+
+    const textStr = texts.join("\n").trim();
+    if (textStr) b.appendChild(el("div", null, textStr));
+
+    if (a2ui.length) {
+      b.classList.add("rich");
+      if (!renderSurface(a2ui, b)) b.appendChild(el("div", null, flattenText(a2ui) || "(no card content)"));
+    }
+    if (!b.childNodes.length) b.textContent = "(no response)";
+  });
+  
+  const c1 = document.getElementById("logFull"); if (c1) c1.scrollTop = c1.scrollHeight;
+  const c2 = document.getElementById("logDrawer"); if (c2) c2.scrollTop = c2.scrollHeight;
+}
+
+async function sendPrompt(text) {
+  if (!text) return;
+  const userBubbles = bubble("user");
+  userBubbles.forEach(b => b.textContent = text);
+
+  const agentBubbles = bubble("agent");
+  agentBubbles.forEach(b => {
+    b.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+  });
+
+  try {
+    const res = await fetch("/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: text }) });
+    const raw = await res.text();
+    let data;
+    try { data = JSON.parse(raw); }
+    catch { throw new Error(`Server returned non-JSON (HTTP ${res.status}). ${raw.slice(0, 300)}`); }
+    renderReply(agentBubbles, data.parts || []);
+  } catch (e) {
+    agentBubbles.forEach(b => {
+      b.innerHTML = "";
+      b.textContent = "Error: " + e.message;
+    });
+  }
+}
+
+function handleFormSubmit(ev, source) {
+  ev.preventDefault();
+  const inputEl = source === 'full' ? document.getElementById("inputFull") : document.getElementById("inputDrawer");
+  const text = inputEl.value.trim();
+  if (!text) return;
+  inputEl.value = "";
+  sendPrompt(text);
+}
+
+async function resetChat() {
+  try {
+    await fetch("/reset", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: "web-user" }) });
+  } catch (e) {
+    console.error("Reset failed", e);
+  }
+  const l1 = document.getElementById("logFull"); if (l1) l1.innerHTML = "";
+  const l2 = document.getElementById("logDrawer"); if (l2) l2.innerHTML = "";
+  const b = bubble("agent");
+  b.forEach(el => el.textContent = "Session reset. Your AI Assistant GM is ready for a fresh inquiry!");
+}
+
+// Initialize on page load
+loadPlatformData();
+</script>
+</body>
+</html>
